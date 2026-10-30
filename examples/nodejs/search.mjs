@@ -2,7 +2,7 @@
 // Usage: PILOTERR_API_KEY=your-key node search.mjs
 
 const params = new URLSearchParams({
-  query: "meta",
+  "query": "meta",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/aliexpress/search?${params}`, {

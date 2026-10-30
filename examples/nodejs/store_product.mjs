@@ -2,8 +2,8 @@
 // Usage: PILOTERR_API_KEY=your-key node store_product.mjs
 
 const params = new URLSearchParams({
-  query: "1101705614",
-  sort: "orders",
+  "query": "1101705614",
+  "sort": "orders",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/aliexpress/store/product?${params}`, {

@@ -5,7 +5,7 @@ require "net/http"
 require "uri"
 
 uri = URI("https://api.piloterr.com/v2/aliexpress/product")
-uri.query = URI.encode_www_form(query: "https://www.aliexpress.com/item/1005009517624640.html")
+uri.query = URI.encode_www_form('query' => 'https://www.aliexpress.com/item/1005009517624640.html')
 
 request = Net::HTTP::Get.new(uri)
 request["x-api-key"] = ENV.fetch("PILOTERR_API_KEY")

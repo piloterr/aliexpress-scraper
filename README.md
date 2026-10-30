@@ -110,7 +110,7 @@ interface AliExpressProduct {
 }
 
 const params = new URLSearchParams({
-  query: "https://www.aliexpress.com/item/1005009517624640.html",
+  "query": "https://www.aliexpress.com/item/1005009517624640.html",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/aliexpress/product?${params}`, {
@@ -138,7 +138,7 @@ Content-Type: application/json
 
 ### Output example
 
-Illustrative, abridged response — real values depend on the page you scrape.
+Example response from the API reference, abridged — real values depend on the page you scrape.
 
 ```json
 {
@@ -255,7 +255,7 @@ interface AliExpressSearch {
 }
 
 const params = new URLSearchParams({
-  query: "meta",
+  "query": "meta",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/aliexpress/search?${params}`, {
@@ -292,7 +292,7 @@ Content-Type: application/json
 
 ### Output example
 
-Illustrative, abridged response — real values depend on the page you scrape.
+Example response from the API reference, abridged — real values depend on the page you scrape.
 
 ```json
 {
@@ -390,8 +390,8 @@ interface AliExpressStore {
 }
 
 const params = new URLSearchParams({
-  query: "1101705614",
-  sort: "orders",
+  "query": "1101705614",
+  "sort": "orders",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/aliexpress/store/product?${params}`, {
@@ -427,7 +427,7 @@ Content-Type: application/json
 
 ### Output example
 
-Illustrative, abridged response — real values depend on the page you scrape.
+Example response from the API reference, abridged — real values depend on the page you scrape.
 
 ```json
 {
@@ -541,7 +541,7 @@ Any language that can make an HTTP request. This README shows Python and TypeScr
     </picture>
   </a>
   <br>
-  <sub>Built by <a href="https://www.piloterr.com">Piloterr</a> — 500+ web scraping APIs, one API key.</sub>
+  <sub>Built by <a href="https://www.piloterr.com">Piloterr</a> — web scraping APIs for e-commerce, search, real estate and more, one API key.</sub>
 </p>
 
 <sub>AliExpress is a trademark of its respective owner. This repository is not affiliated with or endorsed by AliExpress. Examples are released under the MIT license.</sub>
