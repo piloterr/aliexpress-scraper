@@ -15,6 +15,7 @@ Use it for dropshipping product research, price and discount tracking, competito
 | [AliExpress Product API](#aliexpress-product-api) | `/v2/aliexpress/product` | 2 | Scrape a single AliExpress `/item/` page from its URL |
 | [AliExpress Search API](#aliexpress-search-api) | `/v2/aliexpress/search` | 2 | Scrape AliExpress search results from a keyword or a wholesale URL |
 | [AliExpress Store Product API](#aliexpress-store-product-api) | `/v2/aliexpress/store/product` | 2 | List the products of an AliExpress seller store from a store URL or numeric store ID |
+| [AliExpress Reviews API](#aliexpress-reviews-api) | `/v2/aliexpress/product/reviews` | 1 | AliExpress Reviews API |
 
 ## Table of contents
 
@@ -22,6 +23,7 @@ Use it for dropshipping product research, price and discount tracking, competito
 - [AliExpress Product API](#aliexpress-product-api)
 - [AliExpress Search API](#aliexpress-search-api)
 - [AliExpress Store Product API](#aliexpress-store-product-api)
+- [AliExpress Reviews API](#aliexpress-reviews-api)
 - [Code examples in other languages](#code-examples-in-other-languages)
 - [Practical use cases](#practical-use-cases)
 - [Why Piloterr?](#why-piloterr)
@@ -460,19 +462,144 @@ Example response from the API reference, abridged — real values depend on the 
 | `results[].image_url / price / currency` | string / number | Thumbnail, sale price and ISO 4217 currency |
 | `results[].rating / sold_count / review_count` | number | Social proof, when shown |
 
+## AliExpress Reviews API
+
+AliExpress Reviews API: list buyer reviews for a product id or item URL. Each review includes author, star rating, text, date, and photos when the buyer attached them.
+
+`GET | POST https://api.piloterr.com/v2/aliexpress/product/reviews` · **1 credit per request** · [Full reference](https://app.piloterr.com/openapi)
+
+### Request parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `query` | string | ✅ | AliExpress product id or item URL. |
+| `page` | number | — | Page number, starting at 1. Defaults to 1. The feed returns up to 20 reviews per page. `pagination.next` is the next page URL, or null on the last page. |
+| `return_page_source` | boolean | — | When `true`, return the raw feed body as `{"result": "..."}` instead of parsed JSON. Defaults to `false`. |
+
+### Python example
+
+```python
+import json
+import os
+import requests
+
+response = requests.get(
+    "https://api.piloterr.com/v2/aliexpress/product/reviews",
+    headers={"x-api-key": os.environ["PILOTERR_API_KEY"]},
+    params={
+        "query": "1005001388303149",
+    },
+    timeout=60,
+)
+response.raise_for_status()
+data = response.json()
+
+print(json.dumps(data, indent=2, ensure_ascii=False)[:2000])
+```
+
+### TypeScript example
+
+```typescript
+type AliexpressReviews = {
+  results?: {
+    date?: string;
+    text?: string;
+    author?: string;
+    images?: string[];
+    rating?: number;
+  }[];
+  pagination?: {
+    next?: string;
+    page?: number;
+    per_page?: number;
+    total_pages?: number;
+    total_results?: number;
+  };
+};
+
+const params = new URLSearchParams({
+  "query": "1005001388303149",
+});
+
+const response = await fetch(`https://api.piloterr.com/v2/aliexpress/product/reviews?${params}`, {
+  headers: { "x-api-key": process.env.PILOTERR_API_KEY! },
+});
+if (!response.ok) throw new Error(`Piloterr error ${response.status}: ${await response.text()}`);
+
+const data = (await response.json()) as AliexpressReviews;
+
+console.log(JSON.stringify(data, null, 2).slice(0, 2000));
+```
+
+<details>
+<summary><b>POST variant</b></summary>
+
+```http
+POST https://api.piloterr.com/v2/aliexpress/product/reviews
+x-api-key: YOUR_API_KEY
+Content-Type: application/json
+
+{"query": "1005001388303149"}
+```
+</details>
+
+### Output example
+
+Example response from the API reference, abridged — real values depend on the page you scrape.
+
+```json
+{
+  "results": [
+    {
+      "date": "27 Feb 2026",
+      "text": "очень понравился ребенку! пришел быстрее, чем ожидали, все работает, не очень шумный. рекомендую👍",
+      "author": "example",
+      "images": [
+        "https://ae-pic-a1.aliexpress-media.com/kf/A23a05703ab0b4c5ea4a69b008c4da67fw.jpg"
+      ],
+      "rating": 5
+    }
+  ],
+  "pagination": {
+    "next": "https://feedback.aliexpress.com/pc/searchEvaluation.do?productId=1005001388303149&lang=en_US&country=US&page=2&pageSize=20&filter=all&sor…",
+    "page": 1,
+    "per_page": 20,
+    "total_pages": 2,
+    "total_results": 26
+  }
+}
+```
+
+### Response fields
+
+| Field | Type | Description |
+|---|---|---|
+| `results[]` | object[] |  |
+| `results[].date` | string |  |
+| `results[].text` | string |  |
+| `results[].author` | string |  |
+| `results[].images` | string[] |  |
+| `results[].rating` | integer |  |
+| `pagination` | object |  |
+| `pagination.next` | string |  |
+| `pagination.page` | integer |  |
+| `pagination.per_page` | integer |  |
+| `pagination.total_pages` | integer |  |
+| `pagination.total_results` | integer |  |
+
 ## Code examples in other languages
 
 Ready-to-run examples live in the [`examples/`](examples) folder. Each one reads your key from the `PILOTERR_API_KEY` environment variable.
 
-| Language | Product | Search | Store Product |
-|---|---|---|---|
-| cURL (Bash) | [`product`](examples/curl/product.sh) | [`search`](examples/curl/search.sh) | [`store-product`](examples/curl/store_product.sh) |
-| PHP | [`product`](examples/php/product.php) | [`search`](examples/php/search.php) | [`store-product`](examples/php/store_product.php) |
-| C# | [`product`](examples/csharp/Product.cs) | [`search`](examples/csharp/Search.cs) | [`store-product`](examples/csharp/StoreProduct.cs) |
-| Go | [`product`](examples/go/product.go) | [`search`](examples/go/search.go) | [`store-product`](examples/go/store_product.go) |
-| Java | [`product`](examples/java/ProductExample.java) | [`search`](examples/java/SearchExample.java) | [`store-product`](examples/java/StoreProductExample.java) |
-| Ruby | [`product`](examples/ruby/product.rb) | [`search`](examples/ruby/search.rb) | [`store-product`](examples/ruby/store_product.rb) |
-| Node.js | [`product`](examples/nodejs/product.mjs) | [`search`](examples/nodejs/search.mjs) | [`store-product`](examples/nodejs/store_product.mjs) |
+| Language | Product | Search | Store Product | Reviews |
+|---|---|---|---|---|
+| cURL (Bash) | [`product`](examples/curl/product.sh) | [`search`](examples/curl/search.sh) | [`store-product`](examples/curl/store_product.sh) | [`product-reviews`](examples/curl/product_reviews.sh) |
+| PHP | [`product`](examples/php/product.php) | [`search`](examples/php/search.php) | [`store-product`](examples/php/store_product.php) | [`product-reviews`](examples/php/product_reviews.php) |
+| C# | [`product`](examples/csharp/Product.cs) | [`search`](examples/csharp/Search.cs) | [`store-product`](examples/csharp/StoreProduct.cs) | [`product-reviews`](examples/csharp/ProductReviews.cs) |
+| Go | [`product`](examples/go/product.go) | [`search`](examples/go/search.go) | [`store-product`](examples/go/store_product.go) | [`product-reviews`](examples/go/product_reviews.go) |
+| Java | [`product`](examples/java/ProductExample.java) | [`search`](examples/java/SearchExample.java) | [`store-product`](examples/java/StoreProductExample.java) | [`product-reviews`](examples/java/ProductReviewsExample.java) |
+| Ruby | [`product`](examples/ruby/product.rb) | [`search`](examples/ruby/search.rb) | [`store-product`](examples/ruby/store_product.rb) | [`product-reviews`](examples/ruby/product_reviews.rb) |
+| Node.js | [`product`](examples/nodejs/product.mjs) | [`search`](examples/nodejs/search.mjs) | [`store-product`](examples/nodejs/store_product.mjs) | [`product-reviews`](examples/nodejs/product_reviews.mjs) |
 
 ## Practical use cases
 
