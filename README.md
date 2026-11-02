@@ -70,7 +70,7 @@ response = requests.get(
     params={
         "query": "https://www.aliexpress.com/item/1005009517624640.html",
     },
-    timeout=60,
+    timeout=120,
 )
 response.raise_for_status()
 data = response.json()
@@ -220,7 +220,7 @@ response = requests.get(
     params={
         "query": "meta",
     },
-    timeout=60,
+    timeout=120,
 )
 response.raise_for_status()
 data = response.json()
@@ -360,7 +360,7 @@ response = requests.get(
         "query": "1101705614",
         "sort": "orders",
     },
-    timeout=60,
+    timeout=120,
 )
 response.raise_for_status()
 data = response.json()
@@ -489,7 +489,7 @@ response = requests.get(
     params={
         "query": "1005001388303149",
     },
-    timeout=60,
+    timeout=120,
 )
 response.raise_for_status()
 data = response.json()
